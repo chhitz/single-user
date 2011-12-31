@@ -31,10 +31,12 @@ function startup() {
     Property.load();
     LOG.logln("single-user running");
 
-    //set version number
-    Property.setProperty('version', '0.0.1');
-    Property.setFlag('version', 'ARCHIVE', true);
-    Property.store();
+    var version = Property.getNode('version');
+    if (version === null) {
+        //set version number
+        Property.setProperty('version', '0.0.1');
+        Property.setFlag('version', 'ARCHIVE', true);
+    }
 
     Property.setProperty('lastZone', 0);
     Property.store();
