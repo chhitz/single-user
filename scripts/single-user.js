@@ -34,8 +34,12 @@ function startup() {
     var version = Property.getNode('version');
     if (version === null) {
         //set version number
-        Property.setProperty('version', '0.0.1');
+        Property.setProperty('version', '0.5.0');
         Property.setFlag('version', 'ARCHIVE', true);
+    } else {
+        if (version == '0.0.1') {
+            Property.setProperty('version', '0.5.0');
+        }
     }
 
     var enabled = Property.getNode('enabled');
