@@ -44,12 +44,30 @@ function startup() {
         Property.setFlag('enabled', 'ARCHIVE', true);
     }
 
-    Property.setProperty('lastZone', 0);
+    Property.setProperty('lastZones', JSON.stringify([]));
 }
 
 function modelReady() {
     var enable = raisedEvent.parameter.enable === 'true';
 
+    if (enable) {
+        var zoneNodes = Property.getNode('/apartment/zones');
+        var activeZones = [];
+        var zones = zoneNodes.getChildren();
+        for (i = 0; i < zones.length; i++) {
+            var zone = zones[i];
+            var zoneId = zone.getChild('ZoneID').getValue();
+            var lastSceneNode = zone.getChild('groups/group1/lastCalledScene');
+            if (lastSceneNode) {
+                var lastScene = lastSceneNode.getValue();
+                if (validScene(lastScene)) {
+                    activeZones[activeZones.length] = zoneId;
+                }
+            }
+        }
+        LOG.logln('Active zones: ' + JSON.stringify(activeZones));
+        Property.setProperty('lastZones', JSON.stringify(activeZones));
+    }
     Property.setProperty('enabled', enable);
     Property.store();
 }
@@ -67,30 +85,40 @@ function sceneCalled() {
         return;
     }
 
-    if ((zoneId == 0) && (groupId == 0) && (sceneId == 68 || sceneId == 72)) {
+    var lastZones = JSON.parse(Property.getProperty('lastZones'));
+
+    if ((zoneId == 0) && (groupId == 0) && (sceneId == 0 || sceneId == 68 || sceneId == 72)) {
         // all off
-        Property.setProperty('lastZone', 0);
+        Property.setProperty('lastZones', JSON.stringify([]));
         return;
-    } else if ((groupId != 1) || (sceneId == 0) || (zoneId == 0)) {
+    } else if ((groupId != 1) || (zoneId == 0)) {
+        return;
+    } else if (sceneId == 0) {
+        var zoneIndex = lastZones.indexOf(zoneId);
+        if (zoneIndex >= 0) {
+            // zone was on, now off --> remove from active list
+            lastZones.splice(zoneIndex, 1);
+        }
+        Property.setProperty('lastZones', JSON.stringify(lastZones));
+        return;
+    } else if (!validScene(sceneId)) {
         return;
     }
 
-    var lastZone = Property.getProperty('lastZone');
-    if (lastZone == 0) {
-        Property.setProperty('lastZone', zoneId);
-        return;
+    var zoneIndex = lastZones.indexOf(zoneId);
+    if (zoneIndex >= 0) {
+        // zone is already on: turn-off all others
+        lastZones.splice(zoneIndex, 1);
     }
 
-    if (lastZone == zoneId) {
-        // same zone: do nothing
-        return;
+    var i;
+    for (i = 0; i < lastZones.length; i++) {
+        // TODO: should be forceCallScene
+        // TODO: delay scene calls
+        Apartment.getDevices().byZone(lastZones[i]).callScene(0);
     }
 
-    if (validScene(sceneId)) {
-        Apartment.getDevices().byZone(lastZone).callScene(0);
-    }
-
-    Property.setProperty('lastZone', zoneId);
+    Property.setProperty('lastZones', JSON.stringify([zoneId]));
 }
 
 function main() {
