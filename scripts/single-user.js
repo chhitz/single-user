@@ -111,14 +111,23 @@ function sceneCalled() {
         lastZones.splice(zoneIndex, 1);
     }
 
-    var i;
-    for (i = 0; i < lastZones.length; i++) {
-        // TODO: should be forceCallScene
-        // TODO: delay scene calls
-        Apartment.getDevices().byZone(lastZones[i]).callScene(0);
+    if (lastZones.length > 0) {
+        delayedSceneCall(lastZones, 500);
     }
 
     Property.setProperty('lastZones', JSON.stringify([zoneId]));
+}
+
+function delayedSceneCall(lastZones, delay) {
+    var zone = lastZones.shift();
+    LOG.logln('zone: ' + zone);
+    // TODO: should be forceCallScene
+    Apartment.getDevices().byZone(zone).callScene(0);
+
+    if (lastZones.length > 0) {
+        var fn = function() { delayedSceneCall(lastZones, delay); };
+        setTimeout(fn, delay);
+    }
 }
 
 function main() {
