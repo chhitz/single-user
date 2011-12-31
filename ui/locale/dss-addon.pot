@@ -1,0 +1,11 @@
+#: main.js:24
+msgid "Single User"
+msgstr ""
+
+#: main.js:47
+msgid "Single-User Mode"
+msgstr ""
+
+#: main.js:49
+msgid "enabled"
+msgstr ""

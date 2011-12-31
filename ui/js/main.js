@@ -44,9 +44,9 @@ Ext.define('DSS.addon.SingleUser', {
         this.panel = Ext.create('Ext.form.Panel', {
             items:[{
                 xtype: 'checkboxgroup',
-                fieldLabel: 'Single-User Mode',
+                fieldLabel: _('Single-User Mode'),
                 items: [{
-                    boxLabel: 'enabled',
+                    boxLabel: _('enabled'),
                     id: 'rb',
                     inputValue: '1',
                     checked: true,
