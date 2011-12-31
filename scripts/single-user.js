@@ -38,7 +38,19 @@ function startup() {
         Property.setFlag('version', 'ARCHIVE', true);
     }
 
+    var enabled = Property.getNode('enabled');
+    if (enabled === null) {
+        Property.setProperty('enabled', true);
+        Property.setFlag('enabled', 'ARCHIVE', true);
+    }
+
     Property.setProperty('lastZone', 0);
+}
+
+function modelReady() {
+    var enable = raisedEvent.parameter.enable === 'true';
+
+    Property.setProperty('enabled', enable);
     Property.store();
 }
 
@@ -51,12 +63,13 @@ function sceneCalled() {
 //    LOG.logln('Debug: scene '+ sceneId + ' called from zone: ' + zoneId
 //                + (groupId ? (', group: ' + groupId) : ''));
 
-    Property.load();
+    if (Property.getProperty('enabled') == false) {
+        return;
+    }
 
     if ((zoneId == 0) && (groupId == 0) && (sceneId == 68 || sceneId == 72)) {
         // all off
         Property.setProperty('lastZone', 0);
-        Property.store();
         return;
     } else if ((groupId != 1) || (sceneId == 0) || (zoneId == 0)) {
         return;
@@ -65,7 +78,6 @@ function sceneCalled() {
     var lastZone = Property.getProperty('lastZone');
     if (lastZone == 0) {
         Property.setProperty('lastZone', zoneId);
-        Property.store();
         return;
     }
 
@@ -79,7 +91,6 @@ function sceneCalled() {
     }
 
     Property.setProperty('lastZone', zoneId);
-    Property.store();
 }
 
 function main() {
@@ -90,6 +101,8 @@ function main() {
     } else if (raisedEvent.name == 'callScene') {
         sceneCalled();
         return;
+    } else if (raisedEvent.name == 'single-user-enable') {
+        modelReady();
     }
 } // main
 

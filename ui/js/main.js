@@ -16,13 +16,13 @@
  *  Author: Andreas Brauchli <andreas.brauchli@aizo.com>
  */
 
-Ext.define('DSS.addon.MyApp', {
+Ext.define('DSS.addon.SingleUser', {
 
     extend: 'DSS.addon.Framework',
 
     config: {
-        appName: _('MyApp'),
-        appId: 'my-app',
+        appName: _('Single User'),
+        appId: 'single-user',
         appVersion: '0.0.1',
         appIcon: 'images/dss/default_icon.png',
         appLang: 'de_DE'
@@ -41,11 +41,39 @@ Ext.define('DSS.addon.MyApp', {
 
     getContent: function() {
         // TODO: return content as Ext object
+        this.panel = Ext.create('Ext.form.Panel', {
+            items:[{
+                xtype: 'checkboxgroup',
+                fieldLabel: 'Single-User Mode',
+                items: [{
+                    boxLabel: 'enabled',
+                    id: 'rb',
+                    inputValue: '1',
+                    checked: true,
+                    disabled: true,
+                    listeners: {
+                        change: function(field, newValue, oldValue, eOpts) {
+                            console.log(oldValue + ' --> ' + newValue);
+                            // create the 'myapp.testevent' event
+                            var evt = Ext.create('DSS.json.Event', { name: 'single-user-enable' });
+                            evt.raise({ enable: newValue });
+                        }
+                    },
+                    scope: this
+                }]
+            }]
+        });
+        this.dssProperty.getBoolean('enabled', function(value) {
+            // a handler that is called asynchronously when reading a value is finished
+            Ext.getCmp('rb').setValue(value);
+            Ext.getCmp('rb').setDisabled(false);
+        });
+        return this.panel;
     }
 });
 
 Ext.onReady(function() {
-    var myapp = Ext.create('DSS.addon.MyApp');
+    var myapp = Ext.create('DSS.addon.SingleUser');
     myapp.initPage();
 });
 
