@@ -1,0 +1,88 @@
+h1, h2, p {
+    font-family: Helvetica, Arial, Tahoma, Verdana, sans-serif;
+    color: #005138;
+}
+
+h1 {
+    padding: 4px;
+    font-size: 200%;
+}
+
+h2 {
+    padding: 4px;
+    font-size: 110%;
+}
+
+p {
+    padding: 4px 6px;
+    font-size: 12px;
+}
+
+.x-text-link a: link, .x-text-link a: visited, .x-green-button-link a: link, .x-green-button-link a: visited {
+    text-decoration: underline;
+    color: #005138;
+}
+
+.x-green-text, .x-fieldset-header-text {
+    font-family: Helvetica, Arial, Tahoma, Verdana, sans-serif;
+    font-size: 12px;
+    color: #005138;
+}
+
+.black-text {
+    color: #000000;
+}
+
+#logo {
+    float: right;
+    padding: 6px;
+}
+
+h1 a {
+    text-decoration: none;
+}
+
+.icon-center-no-repeat {
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.icon-add-action {
+    background-image: url('images/dss/add.gif') !important;
+}
+
+.icon-edit-action {
+    background-image: url('images/dss/edit.png') !important;
+}
+
+.icon-delete-action {
+    background-image: url('images/dss/delete.png') !important;
+}
+
+.icon-start-action {
+    background-image: url('images/dss/start.png') !important;
+}
+
+.icon-stop-action {
+    background-image: url('images/dss/stop.png') !important;
+}
+
+.icon-refresh-action {
+    background-image: url('images/dss/reload.png') !important;
+}
+
+.x-tree-icon-leaf-a {
+    background-image: url('images/dss/leaf-a.gif') !important;
+    width: 16px;
+}
+
+.x-tree-icon-leaf-a-r {
+    background-image: url('images/dss/leaf-a-r.gif') !important;
+    width: 16px;
+}
+
+.x-tree-icon-leaf-r {
+    background-image: url('images/dss/leaf-r.gif') !important;
+    width: 16px;
+}
+

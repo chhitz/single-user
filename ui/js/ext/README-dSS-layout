@@ -1,0 +1,34 @@
+Note that this is not a stock ext in that
+- Some resources are changed to match the green dSS color scheme
+- The CSS colors all have their G and B components switched (of #RGB or #RRGGBB) to get from stock blue to the dSS scheme
+  use these VIM regexps to do this
+
+%s/#\(\x\)\(\x\)\(\x\)\(\X\)/#\1\3\2\4/g
+%s/#\(\x\x\)\(\x\x\)\(\x\x\)\(\X\)/#\1\3\2\4/g
+
+- The icons can be converted using the same trick with the help of gimp.
+  Run this in the given path (note that the pics will be _OVERWRITTEN_)
+
+  cd ext/resources/themes/images/default
+
+  for i in *; do echo $i; cd $i;
+  gimp -i -b '
+  (define (batch-convert pattern)
+      (let* ((filelist (cadr (file-glob pattern 1))))
+          (while (not (null? filelist))
+              (let* ((filename (car filelist))
+                     (image (car (gimp-file-load RUN-NONINTERACTIVE filename filename)))
+                     (drawable (car (gimp-image-get-active-layer image))))
+                (gimp-selection-all image)
+                (gimp-image-convert-rgb image)
+                (plug-in-colors-channel-mixer RUN-NONINTERACTIVE
+                                              image drawable FALSE
+                                              1 0 0 0 0 1 0 1 0)
+                (gimp-image-convert-indexed image 0 0 256 0 0 "")
+                (gimp-file-save RUN-NONINTERACTIVE image drawable filename filename)
+                (set! filelist (cdr filelist))))))
+      (batch-convert "*.gif")' -b '(gimp-quit 0)';
+  cd ..;
+  done;
+
+
