@@ -44,7 +44,7 @@ function startup() {
 
     var enabled = Property.getNode('enabled');
     if (enabled === null) {
-        Property.setProperty('enabled', true);
+        Property.setProperty('enabled', false);
         Property.setFlag('enabled', 'ARCHIVE', true);
     }
 
