@@ -1,0 +1,10 @@
+SINGLE-USER
+===========
+
+This digitalSTROM Server app brings convenience and great energy
+savings to people living alone in a flat/house.
+
+Once enabled it makes sure that the lights are only turned-on in a
+single room at one time. As soon one switches the lights on in a
+second room the lights in the previous room are automatically turned
+off.
