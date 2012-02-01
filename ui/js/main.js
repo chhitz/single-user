@@ -53,7 +53,6 @@ Ext.define('DSS.addon.SingleUser', {
                     disabled: true,
                     listeners: {
                         change: function(field, newValue, oldValue, eOpts) {
-                            console.log(oldValue + ' --> ' + newValue);
                             // create the 'myapp.testevent' event
                             var evt = Ext.create('DSS.json.Event', { name: 'single-user-enable' });
                             evt.raise({ enable: newValue });
