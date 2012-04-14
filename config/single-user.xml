@@ -6,7 +6,7 @@
       <parameter name="script_id">single-user</parameter>
     </parameter>
   </subscription>
-  <subscription event-name="running" handler-name="javascript">
+  <subscription event-name="model_ready" handler-name="javascript">
     <parameter>
       <parameter name="filename1">/usr/share/dss/add-ons/single-user/single-user.js</parameter>
       <parameter name="script_id">single-user</parameter>

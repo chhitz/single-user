@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright (c) 2011 Christian Hitz, Switzerland
+ *  Copyright (c) 2011,2012 Christian Hitz, Switzerland
  *  Author: Christian Hitz <christian@klarinett.li>
  */
 
@@ -50,28 +50,33 @@ function startup() {
 }
 
 function modelReady() {
-    var enable = raisedEvent.parameter.enable === 'true';
+    var activeZones = [];
+    var zones = getZones();
+    for (var z = 0; z < zones.length; z++) {
+        if (!zones[z].present) {
+            continue;
+        }
+        var groupNode = Property.getNode('/apartment/zones/zone' +
+                                         zones[z].id + '/groups');
+        if (groupNode == undefined) {
+            continue;
+        }
+        var groups = groupNode.getChildren();
 
-    if (enable) {
-        var zoneNodes = Property.getNode('/apartment/zones');
-        var activeZones = [];
-        var zones = zoneNodes.getChildren();
-        for (i = 0; i < zones.length; i++) {
-            var zone = zones[i];
-            var zoneId = zone.getChild('ZoneID').getValue();
-            var lastSceneNode = zone.getChild('groups/group1/lastCalledScene');
-            if (lastSceneNode) {
-                var lastScene = lastSceneNode.getValue();
-                if (validScene(lastScene)) {
-                    activeZones[activeZones.length] = zoneId;
-                }
+        for (var i = 0; i < groups.length; i++) {
+            var g = groups[i];
+            var gindex = g.getChild('group').getValue();
+            if (gindex <= 0 || gindex >= 16) {
+                continue;
+            }
+            var sceneId = g.getChild('lastCalledScene').getValue();
+            if (validScene(sceneId)) {
+                activeZones[activeZones.length] = zones[z].id;
             }
         }
-        LOG.logln('Active zones: ' + JSON.stringify(activeZones));
-        Property.setProperty('lastZones', JSON.stringify(activeZones));
     }
-    Property.setProperty('enabled', enable);
-    Property.store();
+    LOG.logln('Active zones: ' + JSON.stringify(activeZones));
+    Property.setProperty('lastZones', JSON.stringify(activeZones));
 }
 
 function sceneCalled() {
@@ -133,15 +138,22 @@ function delayedSceneCall(lastZones, delay) {
 }
 
 function main() {
-    if (raisedEvent.name == 'running') {
+    if (raisedEvent.name == 'model_ready') {
         startup();
+        modelReady();
         return;
 
     } else if (raisedEvent.name == 'callScene') {
         sceneCalled();
         return;
     } else if (raisedEvent.name == 'single-user-enable') {
-        modelReady();
+        var enable = raisedEvent.parameter.enable === 'true';
+
+        if (enable) {
+            modelReady();
+        }
+        Property.setProperty('enabled', enable);
+        Property.store();
     }
 } // main
 
