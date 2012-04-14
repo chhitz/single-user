@@ -138,7 +138,7 @@ function sceneCalled() {
 
 function delayedSceneCall(lastZones, delay) {
     var zone = lastZones.shift();
-    LOG.logln('zone: ' + zone);
+    LOG.logln('turn off light in zone: ' + zone);
     getZoneByID(zone).callScene(1, 0, Property.getProperty('ignoreLocalPrio'));
 
     if (lastZones.length > 0) {
