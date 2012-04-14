@@ -23,7 +23,7 @@ Ext.define('DSS.addon.SingleUser', {
     config: {
         appName: _('Single User'),
         appId: 'single-user',
-        appVersion: '0.6.0',
+        appVersion: '0.7.0',
         appIcon: 'images/dss/default_icon.png',
         appLang: 'de_DE'
     },
@@ -42,30 +42,60 @@ Ext.define('DSS.addon.SingleUser', {
     getContent: function() {
         // TODO: return content as Ext object
         this.panel = Ext.create('Ext.form.Panel', {
-            items:[{
-                xtype: 'checkboxgroup',
-                fieldLabel: _('Single-User Mode'),
-                items: [{
-                    boxLabel: _('enabled'),
-                    id: 'rb',
-                    inputValue: '1',
-                    checked: true,
-                    disabled: true,
-                    listeners: {
-                        change: function(field, newValue, oldValue, eOpts) {
-                            // create the 'myapp.testevent' event
-                            var evt = Ext.create('DSS.json.Event', { name: 'single-user-enable' });
-                            evt.raise({ enable: newValue });
+            items: [
+                {
+                    xtype: 'checkboxgroup',
+                    fieldLabel: _('Single-User Mode'),
+                    items: [
+                        {
+                            boxLabel: _('enabled'),
+                            id: 'rb',
+                            inputValue: '1',
+                            checked: true,
+                            disabled: true,
+                            listeners: {
+                                change: function(field, newValue, oldValue, eOpts) {
+                                    // create the 'myapp.testevent' event
+                                    var evt = Ext.create('DSS.json.Event', { name: 'single-user-enable' });
+                                    evt.raise({ enable: newValue });
+                                }
+                            },
+                            scope: this
                         }
-                    },
-                    scope: this
-                }]
-            }]
+                    ]
+                },
+                {
+                    xtype: 'checkboxgroup',
+                    fieldLabel: _('Ignore Local Priority'),
+                    items: [
+                        {
+                            boxLabel: _('enabled'),
+                            id: 'ignoreLocalPrio',
+                            inputValue: '1',
+                            checked: false,
+                            disabled: true,
+                            listeners: {
+                                change: function(field, newValue, oldValue, eOpts) {
+                                    // create the 'myapp.testevent' event
+                                    var evt = Ext.create('DSS.json.Event', { name: 'single-user-set-local-prio' });
+                                    evt.raise({ enable: newValue });
+                                }
+                            },
+                            scope: this
+                        }
+                    ]
+                }
+            ]
         });
         this.dssProperty.getBoolean('enabled', function(value) {
             // a handler that is called asynchronously when reading a value is finished
             Ext.getCmp('rb').setValue(value);
             Ext.getCmp('rb').setDisabled(false);
+        });
+        this.dssProperty.getBoolean('ignoreLocalPrio', function(value) {
+            // a handler that is called asynchronously when reading a value is finished
+            Ext.getCmp('ignoreLocalPrio').setValue(value);
+            Ext.getCmp('ignoreLocalPrio').setDisabled(false);
         });
         return this.panel;
     }

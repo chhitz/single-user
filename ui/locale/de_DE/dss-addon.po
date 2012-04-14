@@ -1,3 +1,14 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Christian Hitz <christian@klarinett.li>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
 #: main.js:24
 msgid "Single User"
 msgstr "Single Bewohner"
@@ -9,3 +20,8 @@ msgstr "Single Modus"
 #: main.js:49
 msgid "enabled"
 msgstr "aktiviert"
+
+#: main.js:49
+msgid "Ignore Local Priority"
+msgstr "Lokale Priorisierung ignorieren"
+

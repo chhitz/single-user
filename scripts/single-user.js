@@ -31,22 +31,33 @@ function startup() {
     Property.load();
     LOG.logln("single-user running");
 
-    var version = Property.getNode('version');
+    var version = Property.getProperty('version');
     if (version === null) {
         //set version number
-        Property.setProperty('version', '0.6.0');
+        Property.setProperty('version', '0.7.0');
         Property.setFlag('version', 'ARCHIVE', true);
-    } else {
-        Property.setProperty('version', '0.6.0');
-    }
 
-    var enabled = Property.getNode('enabled');
-    if (enabled === null) {
-        Property.setProperty('enabled', false);
-        Property.setFlag('enabled', 'ARCHIVE', true);
+        var enabled = Property.getProperty('enabled');
+        if (enabled === null) {
+            Property.setProperty('enabled', false);
+            Property.setFlag('enabled', 'ARCHIVE', true);
+        }
+    } else {
+        if (Property.getProperty('version') === '0.6.0') {
+            convert_060_070();
+        }
     }
 
     Property.setProperty('lastZones', JSON.stringify([]));
+}
+
+function convert_060_070() {
+    LOG.logln("convert property tree from 0.6.0 to 0.7.0");
+    //set version number
+    Property.setProperty('ignoreLocalPrio', false);
+    Property.setFlag('version', 'ARCHIVE', true);
+
+    Property.setProperty('version', '0.7.0');
 }
 
 function modelReady() {
@@ -128,8 +139,7 @@ function sceneCalled() {
 function delayedSceneCall(lastZones, delay) {
     var zone = lastZones.shift();
     LOG.logln('zone: ' + zone);
-    // TODO: should be forceCallScene
-    Apartment.getDevices().byZone(zone).callScene(0);
+    getZoneByID(zone).callScene(1, 0, Property.getProperty('ignoreLocalPrio'));
 
     if (lastZones.length > 0) {
         var fn = function() { delayedSceneCall(lastZones, delay); };
@@ -153,6 +163,10 @@ function main() {
             modelReady();
         }
         Property.setProperty('enabled', enable);
+        Property.store();
+    } else if (raisedEvent.name == 'single-user-set-local-prio') {
+        var enable = raisedEvent.parameter.enable === 'true';
+        Property.setProperty('ignoreLocalPrio', enable);
         Property.store();
     }
 } // main

@@ -9,3 +9,6 @@ msgstr ""
 #: main.js:49
 msgid "enabled"
 msgstr ""
+
+msgid "Ignore Local Priority"
+msgstr ""
