@@ -31,33 +31,48 @@ function startup() {
     Property.load();
     LOG.logln("single-user running");
 
-    var version = Property.getProperty('version');
-    if (version === null) {
-        //set version number
-        Property.setProperty('version', '0.7.0');
-        Property.setFlag('version', 'ARCHIVE', true);
-
-        var enabled = Property.getProperty('enabled');
-        if (enabled === null) {
-            Property.setProperty('enabled', false);
-            Property.setFlag('enabled', 'ARCHIVE', true);
-        }
-    } else {
-        if (Property.getProperty('version') === '0.6.0') {
-            convert_060_070();
-        }
+    if (Property.getProperty('version') === null) {
+	convert_000_060();
+    }
+    if (Property.getProperty('version') === '0.6.0') {
+        convert_060_070();
+    }
+    if (Property.getProperty('version') === '0.7.0') {
+        convert_070_080();
     }
 
     Property.setProperty('lastZones', JSON.stringify([]));
 }
 
+function convert_000_060() {
+    LOG.logln("convert property tree from 0.0.0 to 0.6.0");
+    //set version number
+    Property.setProperty('version', '0.6.0');
+    Property.setFlag('version', 'ARCHIVE', true);
+    
+    var enabled = Property.getProperty('enabled');
+    if (enabled === null) {
+        Property.setProperty('enabled', false);
+        Property.setFlag('enabled', 'ARCHIVE', true);
+    }
+}
+
 function convert_060_070() {
     LOG.logln("convert property tree from 0.6.0 to 0.7.0");
-    //set version number
+
     Property.setProperty('ignoreLocalPrio', false);
     Property.setFlag('version', 'ARCHIVE', true);
 
     Property.setProperty('version', '0.7.0');
+}
+
+function convert_070_080() {
+    LOG.logln("convert property tree from 0.7.0 to 0.8.0");
+
+    Property.setProperty('zoneSettings', JSON.stringify({}));
+    Property.setFlag('zoneSettings', 'ARCHIVE', true);
+
+    Property.setProperty('version', '0.8.0');
 }
 
 function modelReady() {
@@ -90,6 +105,10 @@ function modelReady() {
     Property.setProperty('lastZones', JSON.stringify(activeZones));
 }
 
+var IGNORE = 0;
+var OFF = 1;
+var AUTO_OFF = 2;
+
 function sceneCalled() {
     // these need to be parsed as they are strings!
     var sceneId = parseInt(raisedEvent.parameter.sceneID, 10);
@@ -104,6 +123,7 @@ function sceneCalled() {
     }
 
     var lastZones = JSON.parse(Property.getProperty('lastZones'));
+    var zoneSettings = JSON.parse(Property.getProperty('zoneSettings'));
 
     if ((zoneId == 0) && (groupId == 0) && (sceneId == 0 || sceneId == 68 || sceneId == 72)) {
         // all off
@@ -111,7 +131,7 @@ function sceneCalled() {
         return;
     } else if ((groupId != 1) || (zoneId == 0)) {
         return;
-    } else if (sceneId == 0) {
+    } else if ((sceneId == 0) || (sceneId == 40)) {
         var zoneIndex = lastZones.indexOf(zoneId);
         if (zoneIndex >= 0) {
             // zone was on, now off --> remove from active list
@@ -129,6 +149,13 @@ function sceneCalled() {
         lastZones.splice(zoneIndex, 1);
     }
 
+    // ignore actions from zones with IGNORE
+    var zoneSetting = zoneSettings[zoneId];
+    if (zoneSetting === IGNORE) {
+	LOG.logln('ignoring scene call in zone: ' + zoneId);
+	return;
+    }
+
     if (lastZones.length > 0) {
         delayedSceneCall(lastZones, 500);
     }
@@ -138,8 +165,21 @@ function sceneCalled() {
 
 function delayedSceneCall(lastZones, delay) {
     var zone = lastZones.shift();
-    LOG.logln('turn off light in zone: ' + zone);
-    getZoneByID(zone).callScene(1, 0, Property.getProperty('ignoreLocalPrio'));
+    var zoneSettings = JSON.parse(Property.getProperty('zoneSettings'));
+    var zoneSetting = zoneSettings[zone];
+    if (zoneSetting === IGNORE) {
+	LOG.logln('not changing zone: ' + zone);
+	if (lastZones.length > 0) {
+	    delayedSceneCall(lastZones, delay);
+	}
+	return;
+    } else if ((zoneSetting === undefined) || (zoneSetting === OFF)) {
+	LOG.logln('turn off light in zone: ' + zone);
+	getZoneByID(zone).callScene(1, 0, Property.getProperty('ignoreLocalPrio'));
+    } else if (zoneSetting === AUTO_OFF) {
+	LOG.logln('slowly turn off light in zone: ' + zone);
+	getZoneByID(zone).callScene(1, 40, Property.getProperty('ignoreLocalPrio'));
+    }
 
     if (lastZones.length > 0) {
         var fn = function() { delayedSceneCall(lastZones, delay); };
