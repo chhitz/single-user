@@ -208,6 +208,13 @@ function main() {
         var enable = raisedEvent.parameter.enable === 'true';
         Property.setProperty('ignoreLocalPrio', enable);
         Property.store();
+    } else if (raisedEvent.name == 'single-user-zone-config') {
+        var zoneId = parseInt(raisedEvent.parameter.zone, 10);
+	var setting = parseInt(raisedEvent.parameter.setting, 10);
+	var zoneSettings = JSON.parse(Property.getProperty('zoneSettings'));
+	zoneSettings[zoneId] = setting;
+        Property.setProperty('zoneSettings', JSON.stringify(zoneSettings));
+        Property.store();
     }
 } // main
 
