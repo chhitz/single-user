@@ -22,91 +22,93 @@ function htmlDecode(input){
     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
 }
 
-var states = Ext.create('Ext.data.Store', {
-    fields: ['id', 'name'],
-    data : [
-        {"id":0, "name":_("Ignore")},
-        {"id":1, "name":_("Turn off")},
-        {"id":2, "name":_("Turn off slowly")}
-    ]
-});
-
-zoneComboBoxes = [
-    {
-        xtype: 'checkboxgroup',
-        fieldLabel: _('Single-User Mode'),
-        items: [
-            {
-                boxLabel: _('enabled'),
-                id: 'rb',
-                inputValue: '1',
-                checked: true,
-                disabled: true,
-                listeners: {
-                    change: function(field, newValue, oldValue, eOpts) {
-                        // create the 'myapp.testevent' event
-                        var evt = Ext.create('DSS.json.Event', { name: 'single-user-enable' });
-                        evt.raise({ enable: newValue });
-                    }
-                },
-                scope: this
-            }
+function initPanelFields() {
+    var states = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name'],
+        data : [
+            {"id":0, "name":_("Ignore")},
+            {"id":1, "name":_("Turn off")},
+            {"id":2, "name":_("Turn off slowly")}
         ]
-    },
-    {
-        xtype: 'checkboxgroup',
-        fieldLabel: _('Ignore Local Priority'),
-        items: [
-            {
-                boxLabel: _('enabled'),
-                id: 'ignoreLocalPrio',
-                inputValue: '1',
-                checked: false,
-                disabled: true,
-                listeners: {
-                    change: function(field, newValue, oldValue, eOpts) {
-                        // create the 'myapp.testevent' event
-                        var evt = Ext.create('DSS.json.Event', { name: 'single-user-set-local-prio' });
-                        evt.raise({ enable: newValue });
-                    }
-                },
-                scope: this
-            }
-        ]
-    }];
-
-var sString = dss.ajaxSyncRequest('/json/property/query', {
-    'query' : '/apartment/zones(*)/*(*)'
-});
-var result = Ext.JSON.decode(sString);
-var zoneArray = result.result['zones'][0]['zones'];
-for (var i = 0; i < zoneArray.length; i++) {
-    var zoneId = zoneArray[i].ZoneID;
-    var zoneName = zoneArray[i].name;
-    if (zoneId === 0) {
-        continue;
-    }
-    zoneComboBoxes.push({
-        xtype: 'combobox',
-        id: 'zoneCombo' + zoneId.toString(),
-        fieldLabel: _('Behavior for zone %zone').replace('%zone', zoneName),
-        disabled: true,
-        store: states,
-        queryMode: 'local',
-        displayField: 'name',
-        valueField: 'id',
-        emptyText: _('Choose action...'),
-        listeners: {
-            'select': function(field, selection, eOpts) {
-                // create the 'myapp.testevent' event
-                var evt = Ext.create('DSS.json.Event', { name: 'single-user-zone-config' });
-                evt.raise({ zone: field.zoneId, setting: selection[0].data.id });
-            }
-        },
-        zoneId: zoneId,
-        scope: this
     });
-};
+
+    zoneComboBoxes = [
+        {
+            xtype: 'checkboxgroup',
+            fieldLabel: _('Single-User Mode'),
+            items: [
+                {
+                    boxLabel: _('enabled'),
+                    id: 'rb',
+                    inputValue: '1',
+                    checked: true,
+                    disabled: true,
+                    listeners: {
+                        change: function(field, newValue, oldValue, eOpts) {
+                            // create the 'myapp.testevent' event
+                            var evt = Ext.create('DSS.json.Event', { name: 'single-user-enable' });
+                            evt.raise({ enable: newValue });
+                        }
+                    },
+                    scope: this
+                }
+            ]
+        },
+        {
+            xtype: 'checkboxgroup',
+            fieldLabel: _('Ignore Local Priority'),
+            items: [
+                {
+                    boxLabel: _('enabled'),
+                    id: 'ignoreLocalPrio',
+                    inputValue: '1',
+                    checked: false,
+                    disabled: true,
+                    listeners: {
+                        change: function(field, newValue, oldValue, eOpts) {
+                            // create the 'myapp.testevent' event
+                            var evt = Ext.create('DSS.json.Event', { name: 'single-user-set-local-prio' });
+                            evt.raise({ enable: newValue });
+                        }
+                    },
+                    scope: this
+                }
+            ]
+        }];
+
+    var sString = dss.ajaxSyncRequest('/json/property/query', {
+        'query' : '/apartment/zones(*)/*(*)'
+    });
+    var result = Ext.JSON.decode(sString);
+    var zoneArray = result.result['zones'][0]['zones'];
+    for (var i = 0; i < zoneArray.length; i++) {
+        var zoneId = zoneArray[i].ZoneID;
+        var zoneName = zoneArray[i].name;
+        if (zoneId === 0) {
+            continue;
+        }
+        zoneComboBoxes.push({
+            xtype: 'combobox',
+            id: 'zoneCombo' + zoneId.toString(),
+            fieldLabel: _('Behavior for zone %zone').replace('%zone', zoneName),
+            disabled: true,
+            store: states,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'id',
+            emptyText: _('Choose action...'),
+            listeners: {
+                'select': function(field, selection, eOpts) {
+                    // create the 'myapp.testevent' event
+                    var evt = Ext.create('DSS.json.Event', { name: 'single-user-zone-config' });
+                    evt.raise({ zone: field.zoneId, setting: selection[0].data.id });
+                }
+            },
+            zoneId: zoneId,
+            scope: this
+        });
+    };
+}
 
 Ext.define('DSS.addon.SingleUser', {
 
@@ -162,6 +164,7 @@ Ext.define('DSS.addon.SingleUser', {
 
 Ext.onReady(function() {
     dss.buildUpLang(['locale/{languageSuffix}/single-user.po']);
+    initPanelFields();
     var myapp = Ext.create('DSS.addon.SingleUser');
     myapp.initPage();
     myapp.initValues();
