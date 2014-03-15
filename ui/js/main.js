@@ -117,13 +117,12 @@ Ext.define('DSS.addon.SingleUser', {
         appId: 'single-user',
         appVersion: '0.8.0',
         appIcon: 'images/dss/default_icon.png',
-        appLang: 'de_DE'
     },
 
     getHelp: function() {
          return Ext.create('Ext.Component', {
              loader: {
-                 url: 'locale/' + this.appLang + '/LC_MESSAGES/help.html',
+                 url: 'locale/' + dss.staticDataModel.activeLanguage + '/help.html',
                  autoLoad: true,
                  disableCaching: false
              }
@@ -162,6 +161,7 @@ Ext.define('DSS.addon.SingleUser', {
 });
 
 Ext.onReady(function() {
+    dss.buildUpLang(['locale/{languageSuffix}/single-user.po']);
     var myapp = Ext.create('DSS.addon.SingleUser');
     myapp.initPage();
     myapp.initValues();

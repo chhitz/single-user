@@ -12,3 +12,19 @@ msgstr ""
 
 msgid "Ignore Local Priority"
 msgstr ""
+
+msgid "Ignore"
+msgstr ""
+
+msgid "Turn off"
+msgstr ""
+
+msgid "Turn off slowly"
+msgstr ""
+
+msgid "Behavior for zone %zone"
+msgstr ""
+
+msgid "Choose action..."
+msgstr ""
+
