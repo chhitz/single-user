@@ -12,11 +12,11 @@ msgstr ""
 
 #: main.js:24
 msgid "Single User"
-msgstr "Single Bewohner"
+msgstr "Follow Me"
 
 #: main.js:47
 msgid "Single-User Mode"
-msgstr "Single Modus"
+msgstr "Follow Me Status"
 
 #: main.js:49
 msgid "enabled"
