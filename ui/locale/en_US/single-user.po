@@ -1,0 +1,29 @@
+#: main.js:24
+msgid "Single User"
+msgstr "Follow Me"
+
+#: main.js:47
+msgid "Single-User Mode"
+msgstr "Follow Me Mode"
+
+#: main.js:49
+msgid "enabled"
+msgstr "enabled"
+
+msgid "Ignore Local Priority"
+msgstr "Ignore Local Priority"
+
+msgid "Ignore"
+msgstr "Ignore"
+
+msgid "Turn off"
+msgstr "Turn off"
+
+msgid "Turn off slowly"
+msgstr "Turn off slowly"
+
+msgid "Behavior for zone %zone"
+msgstr "Behavior for zone %zone"
+
+msgid "Choose action..."
+msgstr "Choose action..."
