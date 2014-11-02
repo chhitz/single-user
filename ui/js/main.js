@@ -118,7 +118,7 @@ Ext.define('DSS.addon.SingleUser', {
         appName: _('Single User'),
         appId: 'single-user',
         appVersion: '0.8.0',
-        appIcon: 'images/dss/default_icon.png',
+        appIcon: 'default_icon.png',
     },
 
     getHelp: function() {
