@@ -91,7 +91,7 @@ function initPanelFields() {
             xtype: 'combobox',
             id: 'zoneCombo' + zoneId.toString(),
             fieldLabel: _('Behavior for zone %zone').replace('%zone', zoneName),
-            disabled: true,
+            disabled: false,
             store: states,
             queryMode: 'local',
             displayField: 'name',
@@ -117,7 +117,7 @@ Ext.define('DSS.addon.SingleUser', {
     config: {
         appName: _('Single User'),
         appId: 'single-user',
-        appVersion: '0.8.0',
+        appVersion: '0.8.1',
         appIcon: 'default_icon.png',
     },
 
@@ -157,7 +157,6 @@ Ext.define('DSS.addon.SingleUser', {
         for (var zone in zoneConf) {
             var value = zoneConf[zone];
             Ext.getCmp('zoneCombo' + zone).setValue(value);
-            Ext.getCmp('zoneCombo' + zone).setDisabled(false);
         }
     }
 });
