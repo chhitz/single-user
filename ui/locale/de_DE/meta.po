@@ -7,14 +7,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "name"
+#: name
+msgid "Follow Me"
 msgstr "Follow Me"
 
-msgid "descshort"
+#: descshort
+msgid "Turns the light in a room off as soon as the light is turned-on in another room."
 msgstr "Schaltet das Licht im Raum aus, sobald es in einem anderen eingeschaltet wird."
-
-msgid "description"
-msgstr ""
-
-msgid "extradesc"
-msgstr ""
