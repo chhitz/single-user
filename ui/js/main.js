@@ -45,9 +45,10 @@ function initPanelFields() {
                     disabled: true,
                     listeners: {
                         change: function(field, newValue, oldValue, eOpts) {
-                            // create the 'myapp.testevent' event
-                            var evt = Ext.create('DSS.json.Event', { name: 'single-user-enable' });
-                            evt.raise({ enable: newValue });
+                            dss.ajaxSyncRequest('/json/event/raise', {
+                                name : 'single-user-enable',
+                                parameter : 'enable=' + newValue
+                            });
                         }
                     },
                     scope: this
@@ -66,9 +67,10 @@ function initPanelFields() {
                     disabled: true,
                     listeners: {
                         change: function(field, newValue, oldValue, eOpts) {
-                            // create the 'myapp.testevent' event
-                            var evt = Ext.create('DSS.json.Event', { name: 'single-user-set-local-prio' });
-                            evt.raise({ enable: newValue });
+                            dss.ajaxSyncRequest('/json/event/raise', {
+                                name : 'single-user-set-local-prio',
+                                parameter : 'enable=' + newValue
+                            });
                         }
                     },
                     scope: this
@@ -99,9 +101,10 @@ function initPanelFields() {
             emptyText: _('Choose action...'),
             listeners: {
                 'select': function(field, selection, eOpts) {
-                    // create the 'myapp.testevent' event
-                    var evt = Ext.create('DSS.json.Event', { name: 'single-user-zone-config' });
-                    evt.raise({ zone: field.zoneId, setting: selection[0].data.id });
+                    dss.ajaxSyncRequest('/json/event/raise', {
+                        name : 'single-user-zone-config',
+                        parameter : 'zone=' + field.zoneId + ';setting=' + selection[0].data.id
+                    });
                 }
             },
             zoneId: zoneId,
