@@ -120,7 +120,7 @@ Ext.define('DSS.addon.SingleUser', {
     config: {
         appName: _('Single User'),
         appId: 'single-user',
-        appVersion: '0.8.2',
+        appVersion: '0.8.3',
         appIcon: 'default_icon.png',
     },
 
