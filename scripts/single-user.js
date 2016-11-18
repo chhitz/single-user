@@ -61,6 +61,7 @@ function convert_060_070() {
     LOG.logln("convert property tree from 0.6.0 to 0.7.0");
 
     Property.setProperty('ignoreLocalPrio', false);
+    Property.setFlag('ignoreLocalPrio', 'ARCHIVE', true);
     Property.setFlag('version', 'ARCHIVE', true);
 
     Property.setProperty('version', '0.7.0');
@@ -167,6 +168,7 @@ function delayedSceneCall(lastZones, delay) {
     var zone = lastZones.shift();
     var zoneSettings = JSON.parse(Property.getProperty('zoneSettings'));
     var zoneSetting = zoneSettings[zone];
+    var ignoreLocalPrio = Property.getProperty('ignoreLocalPrio');
     if (zoneSetting === IGNORE) {
 	LOG.logln('not changing zone: ' + zone);
 	if (lastZones.length > 0) {
@@ -175,10 +177,10 @@ function delayedSceneCall(lastZones, delay) {
 	return;
     } else if ((zoneSetting === undefined) || (zoneSetting === OFF)) {
 	LOG.logln('turn off light in zone: ' + zone);
-	getZoneByID(zone).callScene(1, 0, Property.getProperty('ignoreLocalPrio'));
+	getZoneByID(zone).callScene(1, 0, ignoreLocalPrio);
     } else if (zoneSetting === AUTO_OFF) {
 	LOG.logln('slowly turn off light in zone: ' + zone);
-	getZoneByID(zone).callScene(1, 40, Property.getProperty('ignoreLocalPrio'));
+	getZoneByID(zone).callScene(1, 40, ignoreLocalPrio);
     }
 
     if (lastZones.length > 0) {
@@ -207,6 +209,7 @@ function main() {
     } else if (raisedEvent.name == 'single-user-set-local-prio') {
         var enable = raisedEvent.parameter.enable === 'true';
         Property.setProperty('ignoreLocalPrio', enable);
+        Property.setFlag('ignoreLocalPrio', 'ARCHIVE', true);
         Property.store();
     } else if (raisedEvent.name == 'single-user-zone-config') {
         var zoneId = parseInt(raisedEvent.parameter.zone, 10);
